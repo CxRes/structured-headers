@@ -19,7 +19,7 @@ export type InnerList = [Item[], Parameters];
  * Parameters they occur within, and the values are bare items (i.e., they
  * themselves cannot be parameterized
  */
-export type Parameters = Map<string, BareItem>;
+export type Parameters = Map<string, BareItem|Item[]>;
 
 /**
  * Dictionaries are ordered maps of key-value pairs, where the keys are short

@@ -80,10 +80,12 @@ export function serializeItem(input: Item|BareItem, params?: Parameters): string
 
 }
 
+export function serializeBareItemArray(input: Item[]): string {
+  return `(${input.map(value => serializeItem(value)).join(' ')})`;
+}
+
 export function serializeInnerList(input: InnerList): string {
-
-  return `(${input[0].map(value => serializeItem(value)).join(' ')})${serializeParameters(input[1])}`;
-
+  return `${serializeBareItemArray(input[0])}${serializeParameters(input[1])}`;
 }
 
 
@@ -180,7 +182,11 @@ export function serializeParameters(input: Parameters): string {
 
     let out = ';' + serializeKey(key);
     if (value!==true) {
-      out+='=' + serializeBareItem(value);
+      if (Array.isArray(value)) {
+        out+='=' + serializeBareItemArray(value);
+      } else {
+        out+='=' + serializeBareItem(value);
+      }
     }
     return out;
 

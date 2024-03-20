@@ -33,4 +33,4 @@ dist/build: $(SOURCE_FILES)
 	touch dist/build
 
 test/httpwg-tests/list.json:
-	git clone https://github.com/httpwg/structured-header-tests test/httpwg-tests
+	git clone -b nesting --single-branch https://github.com/CxRes/structured-field-tests test/httpwg-tests

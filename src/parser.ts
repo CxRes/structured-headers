@@ -132,7 +132,17 @@ export default class Parser {
 
   }
 
-  private parseInnerList(): InnerList {
+  private parseBareItemOrBareItemArray(): BareItem|Item[] {
+
+    if (this.lookChar()==='(') {
+      return this.parseBareItemArray();
+    } else {
+      return this.parseBareItem();
+    }
+
+  }
+
+  private parseBareItemArray(): Item[] {
 
     this.expectChar('(');
     this.pos++;
@@ -143,10 +153,7 @@ export default class Parser {
       this.skipWS();
       if (this.lookChar() === ')') {
         this.pos++;
-        return [
-          innerList,
-          this.parseParameters()
-        ];
+        return innerList;
       }
 
       innerList.push(this.parseItem(false));
@@ -159,6 +166,15 @@ export default class Parser {
 
 
     throw new ParseError(this.pos, 'Could not find end of inner list');
+
+  }
+
+  private parseInnerList(): InnerList {
+
+    return [
+      this.parseBareItemArray(),
+      this.parseParameters()
+    ];
 
   }
 
@@ -204,10 +220,10 @@ export default class Parser {
       this.pos++;
       this.skipWS();
       const key = this.parseKey();
-      let value: BareItem = true;
+      let value: BareItem|Item[] = true;
       if (this.lookChar() === '=') {
         this.pos++;
-        value = this.parseBareItem();
+        value = this.parseBareItemOrBareItemArray();
       }
       parameters.set(key, value);
     }
