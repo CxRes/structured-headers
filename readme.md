@@ -1,20 +1,21 @@
 Structured Headers parser for Javascript
 ========================================
 
-This library is a parser and serializer for the [Structured Headers][1]
-specification, a.k.a. "Structured Field Values for HTTP" (RFC8941).
+This library implements a parser and serializer for the [Structured Field Values for HTTP][2]
+specification. ([RFC9651][3], [RFC8941][1]).
 
 This specification defines a standard serialization for complex HTTP header
 values, including lists (arrays), dictionaries (maps) and also numbers,
-booleans, and binary data.
+booleans, binary data, timestamps and Unicode strings.
 
 The library is written in Typescript, and the examples in this document are
-too, but plain Javascript is also fully supported.
+too, but plain Javascript is also fully supported. It ships with ESM and
+CommonJS builds and has 0 dependencies.
 
 Compatibility
 -------------
 
-This package has 2740 unittests, the vast majority are supplied from the
+This package has 2805 unittests, the vast majority are supplied from the
 official [HTTP WG test suite][2].
 
 However, there are 2 differences in the serializer:
@@ -106,7 +107,7 @@ The type is roughly:
 
 ```typescript
 // The raw value
-type BareItem = number | string | Token | ByteSequence | boolean | Date | DisplayString;
+type BareItem = number | string | Token | ArrayBuffer | boolean | Date | DisplayString;
 
 // The return type of parseItem
 type Item = [
@@ -213,6 +214,13 @@ sh.serializeDictionary({
 // Returns 42
 serializeItem(42);
 
+48,65,6C,6C,6F,2C,20,57,6F,72,6C,64,21.
+
+72, 101, 108, 108,
+  111,  32, 119, 111,
+  114, 108, 100
+
+
 // Returns 5.5
 serializeItem(5.5);
 
@@ -226,7 +234,11 @@ serializeItem("Fryslân");
 serializeItem(true);
 
 // Returns a base-64 representation like: *aGVsbG8=*
-serializeItem(new ByteSequence('aGVsbG8='));
+serializeItem(
+    new UInt8Array(
+        [72, 101, 108, 108, 111,  32, 119, 111, 114, 108, 100]
+    ).buffer
+);
 
 // Returns a unix timestamp
 serializeItem(new Date());
@@ -249,3 +261,4 @@ of the api.
 
 [1]: https://datatracker.ietf.org/doc/html/rfc8941
 [2]: https://github.com/httpwg/structured-field-tests
+[3]: https://www.rfc-editor.org/rfc/rfc9651.html
